@@ -1,0 +1,6 @@
+// Modulemap explícito: sem ele o SwiftPM tenta tratar CWebP.h como umbrella
+// header e recusa o diretório webp/ ao lado.
+module CWebP {
+    header "CWebP.h"
+    export *
+}

@@ -1,0 +1,16 @@
+.build/
+build/
+.DS_Store
+*.xcodeproj
+.swiftpm/
+
+# Configuração local do Claude Code (contém caminhos desta máquina)
+.claude/
+
+# Imagens soltas na raiz são material pessoal de teste (ex.: a marca d'água
+# usada no dia a dia), não parte do projeto.
+/*.webp
+/*.png
+/*.jpg
+/*.jpeg
+/*.heic
