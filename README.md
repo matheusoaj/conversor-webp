@@ -95,13 +95,17 @@ o botão direito no arquivo baixado → **Extrair Tudo** → **Extrair**.
 **3. Instale o app**
 
 Abra a pasta extraída `conversor-webp-main`, entre na pasta **`windows`** e dê dois
-cliques em **`instalar.cmd`**. Se o Windows perguntar se deseja executar o arquivo,
-clique em **Executar**.
+cliques em **`instalar.cmd`**.
+
+Como o arquivo veio da internet, o Windows pode pedir confirmação. Se aparecer
+**"O Windows protegeu o computador"**, clique em **Mais informações** → **Executar
+assim mesmo**. Se aparecer uma pergunta se deseja executar o arquivo, clique em
+**Executar**.
 
 Uma janela preta vai baixar as bibliotecas e montar o instalador — na primeira vez
-leva alguns minutos. No fim, o instalador abre sozinho, instala o app e o abre. Ele
-também cria atalhos no Menu Iniciar e na Área de Trabalho. A pasta baixada pode ser
-apagada depois.
+leva alguns minutos e ocupa cerca de 1 GB na pasta. No fim, o instalador abre
+sozinho, instala o app e o abre, criando atalhos no Menu Iniciar e na Área de
+Trabalho. Depois disso, a pasta baixada pode ser apagada.
 
 ### Atualizar no Windows
 
