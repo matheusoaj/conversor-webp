@@ -1,0 +1,63 @@
+{
+  "name": "conversor-webp",
+  "productName": "Conversor WebP",
+  "version": "1.1.0",
+  "description": "Converta JPEG, PNG e HEIC em WebP em lote, com predefinições de qualidade e marca d'água.",
+  "author": "matheusoaj",
+  "license": "MIT",
+  "private": true,
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "e2e": "electron test/e2e.js",
+    "capturas": "electron test/capturas.js",
+    "pacote": "electron-builder --win --x64 --dir --publish never",
+    "instalador": "electron-builder --win --x64 --publish never"
+  },
+  "dependencies": {
+    "heic-decode": "^2.1.0",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.matheusoaj.conversorwebp",
+    "productName": "Conversor WebP",
+    "copyright": "Copyright © 2026 matheusoaj",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/sharp/**",
+      "node_modules/@img/**"
+    ],
+    "extraResources": [
+      { "from": "bin", "to": "bin" }
+    ],
+    "npmRebuild": false,
+    "win": {
+      "icon": "build/icon.ico",
+      "target": ["nsis"]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "include": "build/installer.nsh",
+      "artifactName": "Conversor-WebP-${version}-Instalador.${ext}",
+      "shortcutName": "Conversor WebP",
+      "uninstallDisplayName": "Conversor WebP",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'">
+  <title>Conversor WebP</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="window">
+    <main id="main" class="main"></main>
+
+    <section class="panel options" id="options">
+      <div class="row between">
+        <h2 class="headline">Qualidade</h2>
+        <span id="quality-value" class="quality-value"></span>
+      </div>
+
+      <div id="presets" class="presets"></div>
+
+      <div class="slider-row">
+        <span class="slider-label">Menor</span>
+        <input id="quality" type="range" min="0" max="100" step="1" aria-label="Qualidade">
+        <span class="slider-label">Melhor</span>
+      </div>
+
+      <p id="preset-subtitle" class="caption secondary"></p>
+
+      <hr>
+
+      <div class="watermark-row">
+        <label>
+          <input id="watermark-enabled" type="checkbox">
+          <span class="texts">
+            <span class="callout">Marca d'água de amostra</span>
+            <span id="watermark-caption" class="caption secondary"></span>
+          </span>
+        </label>
+        <div id="watermark-thumb" class="thumb small" hidden><img alt=""></div>
+        <button id="watermark-adjust" class="btn" hidden>Ajustar…</button>
+        <button id="watermark-choose" class="btn" hidden>Escolher Imagem…</button>
+      </div>
+
+      <div>
+        <button id="advanced-toggle" class="disclosure-toggle" aria-expanded="false"></button>
+        <div id="advanced" class="advanced" hidden>
+          <div class="row">
+            <label for="folder">Pasta de saída</label>
+            <input id="folder" class="text-field" type="text" spellcheck="false" placeholder="webp">
+            <span class="caption tertiary">ao lado do original</span>
+          </div>
+          <div class="method">
+            <div class="row between">
+              <label for="method">Esforço do compressor</label>
+              <span id="method-value" class="secondary mono"></span>
+            </div>
+            <input id="method" type="range" min="0" max="6" step="1">
+            <p class="caption tertiary">Valores altos comprimem um pouco mais, e demoram mais.</p>
+          </div>
+          <label class="check"><input id="metadata" type="checkbox"> Preservar metadados (data, câmera, GPS)</label>
+          <label class="check"><input id="overwrite" type="checkbox"> Regravar arquivos .webp já existentes</label>
+        </div>
+      </div>
+    </section>
+
+    <footer class="panel actions">
+      <span id="status" class="status"></span>
+      <div id="buttons" class="buttons"></div>
+    </footer>
+  </div>
+
+  <div id="drop-highlight" class="drop-highlight" hidden></div>
+
+  <div id="alert" class="backdrop" hidden>
+    <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="alert-title">
+      <div class="body">
+        <h2 id="alert-title" class="headline"></h2>
+        <p id="alert-message" class="callout secondary"></p>
+      </div>
+      <footer><button id="alert-ok" class="btn primary">OK</button></footer>
+    </div>
+  </div>
+
+  <script src="icons.js"></script>
+  <script src="common.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

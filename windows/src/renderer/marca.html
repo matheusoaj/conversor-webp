@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'">
+  <title>Marca d'água de amostra</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="sheet">
+    <div class="content">
+      <div class="preview-column">
+        <div class="preview-box">
+          <img id="preview" alt="Prévia da marca d'água" hidden>
+          <div id="preview-spinner" class="spinner"></div>
+        </div>
+        <div id="navigator" class="navigator"></div>
+      </div>
+
+      <div class="controls">
+        <div class="group">
+          <h2 class="headline">Imagem</h2>
+          <div class="image-info">
+            <div class="thumb large"><img id="mark-thumb" alt=""></div>
+            <div class="details">
+              <span id="mark-size" class="caption mono"></span>
+              <span id="mark-transparency" class="caption status-line"></span>
+            </div>
+          </div>
+          <p id="mark-warning" class="caption secondary" hidden>O fundo da imagem vai aparecer como um retângulo sobre as fotos. Um PNG com fundo transparente fica melhor.</p>
+          <div><button id="change-mark" class="btn">Trocar Imagem…</button></div>
+        </div>
+
+        <div class="group">
+          <h2 class="headline">Posição</h2>
+          <div id="placement" class="segmented" role="radiogroup" aria-label="Posição"></div>
+        </div>
+
+        <div class="group">
+          <div class="row between">
+            <h2 class="headline"><label for="scale">Tamanho</label></h2>
+            <span id="scale-value" class="secondary mono"></span>
+          </div>
+          <input id="scale" type="range" min="5" max="100" step="1">
+        </div>
+
+        <div class="group">
+          <div class="row between">
+            <h2 class="headline"><label for="opacity">Opacidade</label></h2>
+            <span id="opacity-value" class="secondary mono"></span>
+          </div>
+          <input id="opacity" type="range" min="5" max="100" step="1">
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <span class="label caption secondary"><span id="folder-icon"></span><span id="folder-text"></span></span>
+      <button id="done" class="btn large primary">Pronto</button>
+    </footer>
+  </div>
+
+  <script src="icons.js"></script>
+  <script src="common.js"></script>
+  <script src="marca.js"></script>
+</body>
+</html>

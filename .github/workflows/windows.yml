@@ -1,0 +1,110 @@
+name: Windows
+
+# Compila e testa a versão Windows num Windows de verdade: os testes do núcleo,
+# a interface (fotografada), o app de ponta a ponta, o app empacotado e o
+# instalador — incluindo instalar e desinstalar.
+
+on:
+  push:
+    paths:
+      - "windows/**"
+      - ".github/workflows/windows.yml"
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: windows
+        shell: pwsh
+    env:
+      CAPTURAS_DIR: ${{ github.workspace }}\capturas
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: windows/package-lock.json
+
+      - name: Instalação pelo instalar.cmd (o mesmo caminho do usuário)
+        shell: cmd
+        env:
+          CONVERSOR_WEBP_NAO_ABRIR: "1"
+        run: call instalar.cmd
+
+      - name: Testes do núcleo
+        run: npm test
+
+      - name: Linha de comando (código-fonte)
+        run: |
+          $dir = New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\cli"
+          Copy-Item test\fixtures\foto-exif.jpg, test\fixtures\foto.heic, test\fixtures\quebrado.jpg $dir
+          node src/cli/webpify.js $dir
+          if ($LASTEXITCODE -ne 2) { throw "esperado código 2 (um arquivo corrompido), veio $LASTEXITCODE" }
+          $saida = Get-ChildItem "$dir\webp" -Name
+          if ($saida.Count -ne 2) { throw "esperados 2 arquivos em webp\, vieram: $saida" }
+
+      - name: Capturas da interface
+        run: npx electron test/capturas.js
+
+      - name: Teste de ponta a ponta
+        run: npx electron test/e2e.js "$env:RUNNER_TEMP\e2e"
+
+      - name: App empacotado — linha de comando
+        run: |
+          $webpify = "dist\win-unpacked\resources\bin\webpify.cmd"
+          & $webpify --versao
+          if ($LASTEXITCODE -ne 0) { throw "webpify --versao falhou" }
+          $dir = New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\pacote"
+          Copy-Item test\fixtures\foto-exif.jpg, test\fixtures\foto-girada.heic, test\fixtures\logo-transparente.png $dir
+          & $webpify --preset leve $dir
+          if ($LASTEXITCODE -ne 0) { throw "a conversão pelo app empacotado falhou" }
+          Get-ChildItem "$dir\webp"
+          if ((Get-ChildItem "$dir\webp").Count -ne 3) { throw "faltaram arquivos" }
+
+      - name: App empacotado — modo "Enviar para"
+        run: |
+          $dir = New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\enviar-para"
+          Copy-Item test\fixtures\foto-exif.jpg, test\fixtures\foto.heic $dir
+          $app = Start-Process -FilePath "dist\win-unpacked\Conversor WebP.exe" -ArgumentList "--converter", "--preset", "media", "--silencioso", "`"$dir`"" -PassThru
+          if (-not $app.WaitForExit(120000)) { $app.Kill(); throw "o modo sem janela não terminou em 2 minutos" }
+          if ($app.ExitCode -ne 0) { throw "código de saída $($app.ExitCode)" }
+          Get-ChildItem "$dir\webp"
+          if ((Get-ChildItem "$dir\webp").Count -ne 2) { throw "faltaram arquivos" }
+
+      - name: Instalador — instalar, conferir atalhos e desinstalar
+        run: |
+          $installer = Get-ChildItem dist\*Instalador.exe | Select-Object -First 1
+          Write-Host "Instalador: $($installer.Name) ($([math]::Round($installer.Length / 1MB)) MB)"
+          Start-Process $installer.FullName -ArgumentList "/S" -Wait
+          Start-Sleep -Seconds 3
+          Get-Process "Conversor WebP" -ErrorAction SilentlyContinue | Stop-Process -Force
+
+          $installed = "$env:LOCALAPPDATA\Programs\Conversor WebP"
+          if (-not (Test-Path "$installed\Conversor WebP.exe")) { throw "o app não foi instalado em $installed" }
+          $sendTo = [Environment]::GetFolderPath("SendTo")
+          $atalhos = Get-ChildItem $sendTo -Filter "Converter para WebP*" -Name
+          Write-Host "Atalhos no Enviar para: $($atalhos -join ', ')"
+          foreach ($nome in "Alta", "Média", "Leve") {
+            if (-not (Test-Path "$sendTo\Converter para WebP ($nome).lnk")) { throw "atalho ausente: $nome" }
+          }
+          & "$installed\resources\bin\webpify.cmd" --versao
+          if ($LASTEXITCODE -ne 0) { throw "webpify instalado não respondeu" }
+
+          $uninstaller = Get-ChildItem "$installed\Uninstall*.exe" | Select-Object -First 1
+          Start-Process $uninstaller.FullName -ArgumentList "/S" -Wait
+          Start-Sleep -Seconds 3
+          $restantes = Get-ChildItem $sendTo -Filter "Converter para WebP*" -Name
+          if ($restantes) { throw "a desinstalação deixou atalhos: $restantes" }
+          Write-Host "Desinstalação limpa."
+
+      - name: Guardar as capturas
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: capturas-windows
+          path: capturas
+          if-no-files-found: warn

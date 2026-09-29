@@ -1,0 +1,3 @@
+# Scripts do Windows precisam de CRLF; sem isso, "goto" e rótulos falham.
+*.cmd text eol=crlf
+*.nsh text eol=crlf
