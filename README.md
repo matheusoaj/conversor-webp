@@ -1,6 +1,6 @@
 # Conversor WebP
 
-Converte imagens **JPEG, PNG e HEIC** em **WebP** em lote, com predefinições de
+Converte imagens **JPEG, PNG e HEIC** em **WebP** **EM LOTE**, com predefinições de
 qualidade e marca d'água opcional. App nativo para macOS, com três formas de uso:
 janela de arrastar e soltar, clique direito no Finder e linha de comando.
 
