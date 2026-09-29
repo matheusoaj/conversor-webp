@@ -137,7 +137,7 @@ webpify --ajuda
 **No PowerShell (Windows)** — as mesmas opções:
 
 ```powershell
-Set-Alias webpify "$env:LOCALAPPDATA\Programs\Conversor WebP\resources\bin\webpify.cmd"
+Set-Alias webpify "$env:LOCALAPPDATA\Programs\conversor-webp\resources\bin\webpify.cmd"
 
 webpify --preset leve C:\Fotos\catalogo
 webpify --ajuda

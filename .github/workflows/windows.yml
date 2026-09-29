@@ -71,13 +71,15 @@ jobs:
 
       - name: App empacotado — modo "Enviar para"
         run: |
-          $dir = New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\enviar-para"
+          # A pasta de saída com nome próprio prova que os argumentos chegaram ao
+          # conversor — se fossem perdidos, os arquivos iriam para webp\.
+          $dir = New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\enviar para"
           Copy-Item test\fixtures\foto-exif.jpg, test\fixtures\foto.heic $dir
-          $app = Start-Process -FilePath "dist\win-unpacked\Conversor WebP.exe" -ArgumentList "--converter", "--preset", "media", "--silencioso", "`"$dir`"" -PassThru
+          $app = Start-Process -FilePath "dist\win-unpacked\Conversor WebP.exe" -ArgumentList "--converter", "--preset", "leve", "--pasta", "via-enviar-para", "--silencioso", "`"$dir`"" -PassThru
           if (-not $app.WaitForExit(120000)) { $app.Kill(); throw "o modo sem janela não terminou em 2 minutos" }
           if ($app.ExitCode -ne 0) { throw "código de saída $($app.ExitCode)" }
-          Get-ChildItem "$dir\webp"
-          if ((Get-ChildItem "$dir\webp").Count -ne 2) { throw "faltaram arquivos" }
+          Get-ChildItem "$dir\via-enviar-para"
+          if ((Get-ChildItem "$dir\via-enviar-para").Count -ne 2) { throw "faltaram arquivos na pasta pedida" }
 
       - name: Instalador — instalar, conferir atalhos e desinstalar
         run: |
@@ -87,7 +89,7 @@ jobs:
           Start-Sleep -Seconds 3
           Get-Process "Conversor WebP" -ErrorAction SilentlyContinue | Stop-Process -Force
 
-          $installed = "$env:LOCALAPPDATA\Programs\Conversor WebP"
+          $installed = "$env:LOCALAPPDATA\Programs\conversor-webp"
           if (-not (Test-Path "$installed\Conversor WebP.exe")) { throw "o app não foi instalado em $installed" }
           $sendTo = [Environment]::GetFolderPath("SendTo")
           $atalhos = Get-ChildItem $sendTo -Filter "Converter para WebP*" -Name
