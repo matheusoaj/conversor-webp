@@ -1,13 +1,14 @@
 # Conversor WebP
 
 Converte imagens **JPEG, PNG e HEIC** em **WebP** **EM LOTE**, com predefinições de
-qualidade e marca d'água opcional. App nativo para macOS, com três formas de uso:
-janela de arrastar e soltar, clique direito no Finder e linha de comando.
+qualidade e marca d'água opcional. Para **Mac** e **Windows**, com três formas de
+uso: janela de arrastar e soltar, clique direito no Finder ou no Explorador, e
+linha de comando.
 
 Os arquivos originais nunca são alterados: cada imagem convertida é gravada numa
 pasta `webp/` ao lado do original.
 
-**macOS 15 ou mais novo · Mac com chip Apple (M1 ou mais novo) · Licença MIT**
+**Mac:** macOS 15 ou mais novo, com chip Apple · **Windows:** 10 ou 11, 64 bits · **Licença MIT**
 
 ## Recursos
 
@@ -16,7 +17,7 @@ pasta `webp/` ao lado do original.
 - **Qualidade com um clique** — Alta, Média ou Leve, ou qualquer valor de 0 a 100.
 - **Marca d'água de amostra** — sua imagem aplicada no centro, repetida pela imagem
   toda ou no canto, com prévia ao vivo.
-- **Direto do Finder** — clique direito → Ações Rápidas → Converter para WebP.
+- **Direto do Finder ou do Explorador** — clique direito → Converter para WebP.
 - **Fotos de celular na posição certa** — a rotação é corrigida na conversão.
 - **Preserva o que importa** — transparência de PNGs, cores, data, câmera e GPS.
 
@@ -71,29 +72,58 @@ Se as Ações Rápidas não aparecerem no Finder, clique com o botão direito nu
 imagem → **Ações Rápidas** → **Personalizar…** e marque as três opções
 "Converter para WebP".
 
-### Atualizar
+### Atualizar no Mac
 
 Baixe o ZIP novamente e repita o passo 3. Suas preferências e sua marca d'água são
 mantidas.
 
-## Windows
+## Como instalar no Windows
 
-**Ainda não há versão para Windows.** O app é construído com tecnologias exclusivas
-da Apple — a interface, a leitura das imagens e a integração com o Finder —, então
-não roda no Windows 10 nem no 11. Quando houver uma versão para Windows, as
-instruções de instalação vão aparecer aqui.
+Funciona no **Windows 10 e 11, 64 bits**. A instalação monta o instalador no seu
+próprio computador: são três passos, e só o primeiro é mais demorado.
+
+**1. Instale o Node.js** (só na primeira vez)
+
+Baixe a versão **LTS** em [nodejs.org](https://nodejs.org) e instale com as opções
+padrão — é só ir clicando em **Next** até o fim.
+
+**2. Baixe o projeto**
+
+No topo desta página, clique no botão verde **Code** → **Download ZIP**. Clique com
+o botão direito no arquivo baixado → **Extrair Tudo** → **Extrair**.
+
+**3. Instale o app**
+
+Abra a pasta extraída `conversor-webp-main`, entre na pasta **`windows`** e dê dois
+cliques em **`instalar.cmd`**. Se o Windows perguntar se deseja executar o arquivo,
+clique em **Executar**.
+
+Uma janela preta vai baixar as bibliotecas e montar o instalador — na primeira vez
+leva alguns minutos. No fim, o instalador abre sozinho, instala o app e o abre. Ele
+também cria atalhos no Menu Iniciar e na Área de Trabalho. A pasta baixada pode ser
+apagada depois.
+
+### Atualizar no Windows
+
+Baixe o ZIP novamente e repita o passo 3. Suas preferências e sua marca d'água são
+mantidas.
 
 ## Como usar
 
 **No app** — arraste imagens ou pastas para a janela, escolha a qualidade e clique
-em **Converter**. Também aceita arquivos soltos sobre o ícone na Dock.
+em **Converter**. No Mac, também aceita arquivos soltos sobre o ícone na Dock; no
+Windows, sobre o atalho do app.
 
-**No Finder** — selecione imagens ou pastas, clique com o botão direito →
+**No Finder (Mac)** — selecione imagens ou pastas, clique com o botão direito →
 **Ações Rápidas** → `Converter para WebP (Alta / Média / Leve)`. Uma notificação
 avisa quando termina.
 
-**No Terminal** — a ferramenta de linha de comando vem dentro do app. Para chamá-la
-só pelo nome, adicione um atalho uma vez:
+**No Explorador (Windows)** — selecione imagens ou pastas, clique com o botão direito
+→ **Enviar para** → `Converter para WebP (Alta / Média / Leve)`. No Windows 11, o
+"Enviar para" fica em **Mostrar mais opções**. Uma notificação avisa quando termina.
+
+**No Terminal (Mac)** — a ferramenta de linha de comando vem dentro do app. Para
+chamá-la só pelo nome, adicione um atalho uma vez:
 
 ```bash
 echo 'alias webpify="/Applications/Conversor\ WebP.app/Contents/MacOS/webpify"' >> ~/.zshrc
@@ -103,6 +133,18 @@ webpify --preset leve ~/Fotos/catalogo
 webpify -q 88 --sobrescrever ~/Downloads/imagem.png
 webpify --ajuda
 ```
+
+**No PowerShell (Windows)** — as mesmas opções:
+
+```powershell
+Set-Alias webpify "$env:LOCALAPPDATA\Programs\Conversor WebP\resources\bin\webpify.cmd"
+
+webpify --preset leve C:\Fotos\catalogo
+webpify --ajuda
+```
+
+Para o atalho valer sempre, adicione a linha `Set-Alias` ao seu perfil
+(`notepad $PROFILE`).
 
 ## Qualidade
 
@@ -163,6 +205,8 @@ contra 62 segundos convertendo uma por vez. A marca d'água acrescenta cerca de 
 
 ## Para desenvolvedores
 
+### Mac
+
 ```
 Sources/
   CWebP/            Ponte C para a libwebp (modulemap + shim)
@@ -197,7 +241,39 @@ cp out/libwebp.a out/libwebpmux.a out/libsharpyuv.a <projeto>/Vendor/libwebp/lib
 Depois ajuste `platforms: [.macOS(.v15)]` em `Package.swift` e `MIN_MACOS` em
 `build.sh` para a versão escolhida.
 
+### Windows
+
+A versão Windows fica em `windows/`, feita com [Electron](https://www.electronjs.org)
+e a biblioteca de imagens [sharp](https://sharp.pixelplumbing.com). O mesmo código
+roda no Mac, o que permite desenvolver e testar a versão Windows sem sair dele.
+
+```
+windows/
+  src/core/       Núcleo: varredura, nomes, conversão, EXIF, HEIC, marca d'água, lote
+  src/cli/        Linha de comando webpify, com as mesmas opções da versão Mac
+  src/main/       Processo principal do Electron e o "motor" que converte à parte
+  src/renderer/   Interface: janela principal e janela da marca d'água
+  test/           Testes do núcleo, teste de ponta a ponta e capturas da interface
+  build/          Ícone e os atalhos do "Enviar para" (script do instalador NSIS)
+  instalar.cmd    Instalação a partir do código, em dois cliques
+```
+
+```bash
+cd windows
+npm install
+npm test            # núcleo: conversão, rotação, cores, EXIF, marca d'água, lote
+npm run e2e         # abre o app de verdade fora da tela e converte uma pasta
+npm run capturas    # fotografa cada estado da interface em capturas/
+npm start           # abre o app
+npm run instalador  # gera dist/Conversor-WebP-<versão>-Instalador.exe (no Windows)
+```
+
+A cada envio, o GitHub Actions compila e testa tudo num Windows real — inclusive
+instalar e desinstalar pelo instalador — e guarda as capturas da interface.
+
 ## Desinstalar
+
+**Mac:**
 
 ```bash
 rm -rf "/Applications/Conversor WebP.app"
@@ -206,10 +282,20 @@ rm -rf ~/Library/Application\ Support/"Conversor WebP"
 /System/Library/CoreServices/pbs -flush
 ```
 
+**Windows:** **Configurações** → **Aplicativos** → **Conversor WebP** → **Desinstalar**.
+Os atalhos do "Enviar para" saem junto. As preferências e a marca d'água guardada
+ficam em `%APPDATA%\Conversor WebP` — apague essa pasta se quiser remover tudo.
+
 ## Licença
 
 [MIT](LICENSE) — use, modifique e distribua à vontade, mantendo o aviso de
 copyright.
 
-Inclui a [libwebp](https://chromium.googlesource.com/webm/libwebp), do Google,
-distribuída sob licença BSD — veja [`Vendor/libwebp/`](Vendor/libwebp/).
+A versão Mac inclui a [libwebp](https://chromium.googlesource.com/webm/libwebp),
+do Google, distribuída sob licença BSD — veja [`Vendor/libwebp/`](Vendor/libwebp/).
+
+A versão Windows usa [Electron](https://www.electronjs.org) (MIT),
+[sharp](https://sharp.pixelplumbing.com) (Apache 2.0) com a libvips (LGPL 3.0), e
+[heic-decode](https://github.com/catdad-experiments/heic-decode) (ISC) com a libheif
+(LGPL 3.0) para ler HEIC. As licenças completas acompanham cada biblioteca na pasta
+`node_modules` após a instalação.

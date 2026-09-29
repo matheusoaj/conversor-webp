@@ -40,12 +40,16 @@ jobs:
 
       - name: Linha de comando (código-fonte)
         run: |
+          # O código 2 é o esperado aqui (há um arquivo corrompido); sem isto o
+          # PowerShell trataria qualquer código diferente de zero como erro fatal.
+          $PSNativeCommandUseErrorActionPreference = $false
           $dir = New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\cli"
           Copy-Item test\fixtures\foto-exif.jpg, test\fixtures\foto.heic, test\fixtures\quebrado.jpg $dir
           node src/cli/webpify.js $dir
           if ($LASTEXITCODE -ne 2) { throw "esperado código 2 (um arquivo corrompido), veio $LASTEXITCODE" }
           $saida = Get-ChildItem "$dir\webp" -Name
           if ($saida.Count -ne 2) { throw "esperados 2 arquivos em webp\, vieram: $saida" }
+          exit 0
 
       - name: Capturas da interface
         run: npx electron test/capturas.js
